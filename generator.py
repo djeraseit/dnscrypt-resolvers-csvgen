@@ -23,6 +23,12 @@ class unix_dialect(csv.Dialect):
     quoting = csv.QUOTE_ALL
 
 
+def json_load(resp, encoding='utf-8'):
+    if sys.version_info.major == 3 and sys.version_info.minor < 6:
+        return json.loads(resp.read().decode(encoding))
+    return json.load(resp)
+
+
 DNSCRYPT_FIELDS = [
     "Name",
     # "Full name",
@@ -117,7 +123,7 @@ if __name__ == "__main__":
             },
             filter(
                 generate_filter(),
-                json.load(urlopen(
+                json_load(urlopen(
                     "https://download.dnscrypt.info/dnscrypt-resolvers/json/public-resolvers.json"  # noqa: E501
                 ))
             )
